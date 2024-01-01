@@ -1,0 +1,21 @@
+# enviroment
+venv/
+
+# hidden dirs
+.git/
+.vscode/
+
+# python cache
+__pycache__/
+*.pyc
+
+# logs
+logs/
+*.log
+
+# saved data
+sessions/
+settings.conf
+
+# other
+drafts/
