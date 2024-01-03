@@ -16,7 +16,7 @@ logs/
 # saved data
 sessions/
 output/
-settings.conf
+settings.json
 
 # other
 drafts/
