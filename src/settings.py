@@ -1,11 +1,9 @@
-import os, pathlib, dotenv
+import os, logging, pathlib
 
-
-_dir = pathlib.Path(__file__).parents[1]
-config_path = os.path.join(_dir, 'settings.conf')
-if os.path.exists(config_path):
-    dotenv.load_dotenv(config_path)
 
 # paths
+_dir = pathlib.Path(__file__).parents[1]
+
 SESSIONS_PATH = os.path.join(_dir, 'sessions')
 LOGS_PATH = os.path.join(_dir, 'logs')
+LOG_LEVEL = logging.INFO

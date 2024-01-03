@@ -1,5 +1,5 @@
 from instaloader import Instaloader, Post, Profile
-from typing import List, Tuple, Iterable
+from typing import List, Iterable
 import os, logging
 from . import settings
 
@@ -18,16 +18,26 @@ class Parser:
         self.result = []
         self._history = []  # list of account that have already been checked
 
+    @staticmethod
+    def _cut_url(value: str) -> str:
+        "Checking string for a url and returns the value"
+        if not 'https' in value:
+            return value
+        elif value[-1] == '/':
+            return value.split('/')[-2]
+        return value.split('/')[-1]
+
     def get_post(self, code_or_url: str) -> Post:    
         "Getting post"
-        if not 'https' in code_or_url:
-            code = code_or_url
-        elif code_or_url[-1] == '/':
-            code = code_or_url.split('/')[-2]
-        else:
-            code = code_or_url.split('/')[-1]
+        code = self._cut_url(code_or_url)
         logging.info(f'Getting post by {code=}')
         return Post.from_shortcode(self.loader.context, code)
+
+    def get_profile(self, username_or_url: str) -> Profile:
+        "Getting user profile"
+        username = self._cut_url(username_or_url)
+        logging.info(f'Getting user profile by {username=}')
+        return Profile.from_username(self.loader.context, username)
 
     def _parse(self, users: Iterable[Profile]) -> None:
         "Checking users and append verified ones"
@@ -58,3 +68,13 @@ class Parser:
     def parse_followees(self, user: Profile) -> None:
         "Parsing user's followees (проверка подписок)"
         self._parse(user.get_followees())
+
+
+def login_and_save_session(username: str, passwd: str) -> None:
+    "Loggin in account and saving session file"
+    loader = Instaloader()
+    loader.login(username, passwd)
+    logging.info(f'Saving session {username=}')
+    loader.save_session_to_file(
+        os.path.join(settings.SESSIONS_PATH, f'{username}.session'),
+    )

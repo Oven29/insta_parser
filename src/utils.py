@@ -1,5 +1,5 @@
 from logging.handlers import RotatingFileHandler
-from typing import Tuple
+from typing import Tuple, Dict
 import os, logging
 from . import settings
 
@@ -28,5 +28,15 @@ def logging_setup(*args: Tuple[str]) -> None:
         ),
         format='[' + ' | '.join(['%(asctime)s', '%(levelname)s'] + list(args)) + ']: %(message)s',
         datefmt='%m.%d.%Y %H:%M:%S',
-        level=logging.INFO,
+        level=settings.LOG_LEVEL,
     )
+
+
+def get_sessions() -> Dict[str, str]:
+    "Returns dictionary of usernames and paths to session files these username"
+    sessions = {}
+    for filename in list(os.walk(settings.SESSIONS_PATH))[0][2]:
+        username, extension = filename.rsplit('.', 1)
+        if extension == 'session':
+            sessions[username] = os.path.join(settings.SESSIONS_PATH, filename)
+    return sessions
