@@ -1,6 +1,6 @@
 from typing import Tuple
-import os, time, random
-from . import settings
+import os
+from . import settings, utils
 
 
 class WriterBase:
@@ -12,7 +12,7 @@ class WriterBase:
         else:
             self.path = os.path.join(
                 settings.OUTPUT_PATH,
-                f'output-{time.time()}-{random.randint(1, 10)}.{self.extension}',
+                f'output-{utils.generate_code()}.{self.extension}',
             )
 
     def write(self, *values: Tuple[str]) -> None: ...

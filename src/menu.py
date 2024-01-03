@@ -19,7 +19,7 @@ def draw(*items: Tuple[Item], prompt: str | None = None, zero_index: int = 0) ->
         number = input('>>> ')
         if number.isdigit():
             number = int(number)
-            if zero_index <= number <= len(items):
+            if zero_index <= number <= len(items) - 1 + zero_index:
                 number -= zero_index
                 break
         logging.error(f'Неверный ввод "{number}"')

@@ -1,6 +1,7 @@
 from logging.handlers import RotatingFileHandler
 from typing import Tuple, Dict, List
-import os, logging
+from string import ascii_letters as _base
+import os, logging, random
 from . import settings
 
 
@@ -12,6 +13,10 @@ def check_path(path: str) -> bool:
     return False
 
 
+def generate_code(length: int = 10) -> str:
+    return ''.join(random.choice(list(_base)) for _ in range(length))
+
+
 def logging_setup(*args: Tuple[str]) -> None:
     "Logging setup"
     check_path(settings.LOGS_PATH)
@@ -19,10 +24,8 @@ def logging_setup(*args: Tuple[str]) -> None:
         handlers=(
             logging.StreamHandler(),
             RotatingFileHandler(
-                filename=os.path.join(settings.LOGS_PATH, '.log'),
-                mode='a',
-                maxBytes=1024 * 1024,
-                backupCount=4,
+                filename=os.path.join(settings.LOGS_PATH, f'{generate_code()}.log'),
+                mode='w',
                 encoding='utf-8',
             ),
         ),
