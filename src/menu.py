@@ -11,8 +11,7 @@ class Item:
 
 def draw(*items: Tuple[Item], prompt: str | None = None, zero_index: int = 0) -> None:
     print(
-        (prompt or 'Выберите действие, вписав соответствующую цифру, '
-         'или нажмите CTRL + C для выхода из программы'),
+        (prompt or 'Выберите действие, вписав соответствующую цифру'),
         *[f'{i + zero_index}. {items[i].name}' for i in range(len(items))],
         sep='\n',
     )

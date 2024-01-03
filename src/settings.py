@@ -31,4 +31,4 @@ def update_settings(key: str, value: str) -> None:
 SESSIONS_PATH = settings['sessions_path']
 OUTPUT_PATH = settings['ouput_path']
 LOGS_PATH = settings['logs_path']
-LOG_LEVEL = logging._nameToLevel.get(settings['log_level'])
+LOG_LEVEL = logging._nameToLevel[settings['log_level'].upper()]

@@ -15,8 +15,6 @@ def check_path(path: str) -> bool:
 def logging_setup(*args: Tuple[str]) -> None:
     "Logging setup"
     check_path(settings.LOGS_PATH)
-    if settings.LOG_LEVEL is None:
-        return
     logging.basicConfig(
         handlers=(
             logging.StreamHandler(),
@@ -49,5 +47,5 @@ def extract_data(value: str) -> List[str]:
     if os.path.exists(value):  # path to file with data
         with open(value, 'r', encoding='utf-8') as f:
             data = f.read().split('\n')
-            return [el for el in data if el.data != ' ']
+            return [el for el in data if el != ' ']
     return [value]

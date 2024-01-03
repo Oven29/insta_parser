@@ -22,6 +22,7 @@ class Parser:
     @staticmethod
     def _cut_url(value: str) -> str:
         "Checking string for a url and returns the value"
+        value = value.replace(' ', '')
         if not 'https' in value:
             return value
         elif value[-1] == '/':

@@ -27,13 +27,14 @@ def start_parser(name: str, mode: int) -> callable:
                     account.parse_likers(post)
                 if mode in (0, 2):
                     account.parse_commentators(post)
-            else:
-                logging.info(f'Начало проверки профиля {el}')
-                profile = account.get_profile(el)
-                if mode == 3:
-                    account.parse_followees(profile)
-                elif mode == 4:
-                    account.parse_followers(profile)
+            elif mode == 3:
+                logging.info(f'Начало проверки подписок пользователя {el}')
+                account.parse_followees(account.get_profile(el))
+            elif mode == 4:
+                logging.info(f'Начало проверки подписчиков пользователя {el}')
+                account.parse_followers(account.get_profile(el))
+        logging.info('Парсинг завершён, выход в главное меню')
+        main_menu()
     return call
 
 
@@ -100,7 +101,7 @@ def delete_account() -> None:
         main_menu()
 
 
-def log_settings() -> callable:
+def log_settings() -> None:
     def next_step(level: str) -> callable:
         def call() -> None:
             settings.update_settings('log_level', level)
@@ -108,30 +109,31 @@ def log_settings() -> callable:
                 'Чтобы изменения вступили в силу, перезапустите программу')
             main_menu()
         return call
-    return lambda : menu.draw(
+    menu.draw(
         menu.Item('Назад', settings_menu),
         menu.Item('DEBUG (выводить все сообщения, в том числе сообщения для отладки)', next_step('debug')),
         menu.Item('INFO (выводить информационные сообщения и ошибки)', next_step('info')),
         menu.Item('ERROR (выводить только ошибки)', next_step('error')),
-        menu.Item('отключить логирование (не выводить никаких сообщений)', next_step('disabled')),
+        menu.Item('отключить логирование (не выводить никаких сообщений)', next_step('critical')),
     )
 
 
-def dir_settings(property_name: str) -> callable:
-    def call() -> None:
-        property_name += '_path'
-        mean = getattr(settings, property_name.upper())
+class dir_settings:
+    def __init__(self, property_name: str) -> None:
+        self.property_name = f'{property_name}_path'
+
+    def __call__(self) -> None:
+        mean = getattr(settings, self.property_name.upper())
         value = ''
-        print(f'Укажите путь до папки, в которое будут храниться данные (значение сейчас: {mean}) '
+        print(f'Укажите путь до папки, в которое будут храниться данные (значение сейчас: "{mean}") '
             'ИЛИ напишите 0, чтобы вернуться в главное меню')
-        while not os.path.isdir(value) or value != '0':
+        while not os.path.isdir(value) and value != '0':
             value = input('>>> ')
         if value != '0':
-            settings.update_settings(property_name, value)
-            logging.info(f'Значение параметра {property_name} обновлено ({mean} -> {value}) '
+            settings.update_settings(self.property_name, value)
+            logging.info(f'Значение параметра {self.property_name} обновлено ({mean} -> {value}) '
                 'Чтобы изменения вступили в силу, перезапустите программу')
         main_menu()
-    return call
 
 
 def set_default_settings() -> None:
@@ -141,8 +143,8 @@ def set_default_settings() -> None:
     main_menu()
 
 
-def settings_menu() -> callable:
-    return lambda : menu.draw(
+def settings_menu() -> None:
+    menu.draw(
         menu.Item('Назад', main_menu),
         menu.Item('Настроить логи', log_settings),
         menu.Item('Указать место хранение файлов сессий', dir_settings('sessions')),
@@ -151,13 +153,17 @@ def settings_menu() -> callable:
     )
 
 
+def exit_program() -> None:
+    raise KeyboardInterrupt('GoodBuy')
+
+
 def main_menu() -> None:
     menu.draw(
+        menu.Item('Выйти из программы', exit_program),
         menu.Item('Запустить парсер', main_start),
         menu.Item('Добавить акканут', add_account),
         menu.Item('Удалить аккаунт', delete_account),
         menu.Item('Настройки программы', settings_menu),
-        zero_index=1,
     )
 
 
@@ -171,7 +177,7 @@ def start() -> None:
         main_menu()
     except KeyboardInterrupt:
         logging.info('Выход из программы')
-        input('Нажмите любую кнопку для закрытия окна')
+        input('Нажмите любую кнопку для закрытия окна ')
     except Exception as e:
         logging.error(e)
         logging.debug(e, exc_info=True)
