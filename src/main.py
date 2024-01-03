@@ -1,10 +1,15 @@
 from getpass import getpass
 import os, logging
 from . import settings, utils, menu, client
+from .writer import TxtWriter
 
 
 def start_parser(name: str, mode: int) -> callable:
     def call() -> None:
+        print('Укажите путь до текстового файла со списком '
+            'ключевых слов/словосочетаний ИЛИ вставьте слово/словосочетание')
+        keywords = utils.extract_data(input('>>> '))
+        keywords = [el.lower() for el in keywords]
         if 0 <= mode <= 2:
             print('Укажите путь до текстового файла со списком '
                 'ссылок на посты ИЛИ вставьте ссылку на один пост')
@@ -12,14 +17,8 @@ def start_parser(name: str, mode: int) -> callable:
             print('Укажите путь до текстового файла со списком '
                 'ссылок на аккаунты/имён аккаунтов ИЛИ '
                 'вставьте ссылку на один аккаунт/имя одного аккаунта')
-        value = input('>>> ')
-        if '.' in value:  # path to file with data
-            with open(value, 'r', encoding='utf-8') as f:
-                data = f.read().split('\n')
-                data = [el for el in data if el.data != ' ']
-        else:
-            data = [value]
-        account = client.Parser(name)
+        data = utils.extract_data(input('>>> '))
+        account = client.Parser(name, keywords, TxtWriter())
         for el in data:
             if 0 <= mode <= 2:
                 logging.info(f'Начало проверки поста {el}')
@@ -47,13 +46,11 @@ def main_start() -> None:
             'Подписки пользователя/пользователей',          # 3
             'Подписчики пользователя/пользователей',        # 4
         )
-        def call() -> None:
-            menu.draw(
-                menu.Item('Назад', main_start),
-                *[menu.Item(items[i], start_parser(name, i)) for i in range(len(items))],
-                prompt='Выберите источник пользователей для проверки',
-            )
-        return call
+        return lambda : menu.draw(
+            menu.Item('Назад', main_start),
+            *[menu.Item(items[i], start_parser(name, i)) for i in range(len(items))],
+            prompt='Выберите источник пользователей для проверки',
+        )
 
     accounts = utils.get_sessions()
     if len(accounts):
@@ -87,7 +84,7 @@ def delete_account() -> None:
     def _delete_func(name: str, path: str) -> callable:
         def call() -> None:
             os.remove(path)
-            logging.info(f'Удаление сессии аккаунта {name} (путь {path})')
+            logging.info(f'Сессия аккаунта {name} успешно удалена (путь {path})')
             main_menu()
         return call
 
@@ -103,11 +100,64 @@ def delete_account() -> None:
         main_menu()
 
 
+def log_settings() -> callable:
+    def next_step(level: str) -> callable:
+        def call() -> None:
+            settings.update_settings('log_level', level)
+            logging.info('Уровень логирования обновлён. '
+                'Чтобы изменения вступили в силу, перезапустите программу')
+            main_menu()
+        return call
+    return lambda : menu.draw(
+        menu.Item('Назад', settings_menu),
+        menu.Item('DEBUG (выводить все сообщения, в том числе сообщения для отладки)', next_step('debug')),
+        menu.Item('INFO (выводить информационные сообщения и ошибки)', next_step('info')),
+        menu.Item('ERROR (выводить только ошибки)', next_step('error')),
+        menu.Item('отключить логирование (не выводить никаких сообщений)', next_step('disabled')),
+    )
+
+
+def dir_settings(property_name: str) -> callable:
+    def call() -> None:
+        property_name += '_path'
+        mean = getattr(settings, property_name.upper())
+        value = ''
+        print(f'Укажите путь до папки, в которое будут храниться данные (значение сейчас: {mean}) '
+            'ИЛИ напишите 0, чтобы вернуться в главное меню')
+        while not os.path.isdir(value) or value != '0':
+            value = input('>>> ')
+        if value != '0':
+            settings.update_settings(property_name, value)
+            logging.info(f'Значение параметра {property_name} обновлено ({mean} -> {value}) '
+                'Чтобы изменения вступили в силу, перезапустите программу')
+        main_menu()
+    return call
+
+
+def set_default_settings() -> None:
+    settings.write_file(settings.default_values)
+    logging.info('Настройки сброшены до значений по умолчанию. '
+        'Чтобы изменения вступили в силу, перезапустите программу')
+    main_menu()
+
+
+def settings_menu() -> callable:
+    return lambda : menu.draw(
+        menu.Item('Назад', main_menu),
+        menu.Item('Настроить логи', log_settings),
+        menu.Item('Указать место хранение файлов сессий', dir_settings('sessions')),
+        menu.Item('Указать место хранение выходных файлов', dir_settings('output')),
+        menu.Item('Сбросить настройки', set_default_settings),
+    )
+
+
 def main_menu() -> None:
     menu.draw(
         menu.Item('Запустить парсер', main_start),
         menu.Item('Добавить акканут', add_account),
         menu.Item('Удалить аккаунт', delete_account),
+        menu.Item('Настройки программы', settings_menu),
+        zero_index=1,
     )
 
 
@@ -115,11 +165,13 @@ def start() -> None:
     # setup
     utils.logging_setup()
     utils.check_path(settings.SESSIONS_PATH)
+    utils.check_path(settings.OUTPUT_PATH)
     # run
     try:
         main_menu()
     except KeyboardInterrupt:
-        pass
+        logging.info('Выход из программы')
+        input('Нажмите любую кнопку для закрытия окна')
     except Exception as e:
         logging.error(e)
         logging.debug(e, exc_info=True)

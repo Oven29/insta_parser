@@ -2,12 +2,13 @@ from instaloader import Instaloader, Post, Profile
 from typing import List, Iterable
 import os, logging
 from . import settings
+from .writer import WriterBase
 
 
 class Parser:
     """Parsing user profiles from likers, commentators post or followers"""
 
-    def __init__(self, username: str, keywords: List[str]) -> None:
+    def __init__(self, username: str, keywords: List[str], writer: WriterBase) -> None:
         "Loading session from file and cerating instance loader"
         self.loader = Instaloader()
         self.loader.load_session_from_file(
@@ -15,7 +16,7 @@ class Parser:
             os.path.join(settings.SESSIONS_PATH, f'{username}.session'),
         )
         self.keywords = keywords
-        self.result = []
+        self.writer = writer
         self._history = []  # list of account that have already been checked
 
     @staticmethod
@@ -42,15 +43,16 @@ class Parser:
     def _parse(self, users: Iterable[Profile]) -> None:
         "Checking users and append verified ones"
         for el in users:
-            logging.info(f'Checking user @{el.username} {el.userid=}')
-            if el.username in self.history:
+            if el.username in self._history:
                 continue
             self._history.append(el.username)
+            bio = el.biography.lower()
+            logging.info(f'Checking user @{el.username} {el.userid=} {bio=}')
             for kw in self.keywords:
-                if kw in el.biography.lower():
+                if kw in bio:
                     logging.info(f'A match was found @{el.username} {el.userid=} '
-                        f'"{el.kw}" in "{el.biography}"')
-                    self.result.append(el.username)
+                        f'"{kw}" {bio=}')
+                    self.writer.write(el.username)
                     break
 
     def parse_commentators(self, post: Post) -> None:

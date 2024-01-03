@@ -15,6 +15,7 @@ logs/
 
 # saved data
 sessions/
+output/
 settings.conf
 
 # other
