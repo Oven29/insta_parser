@@ -14,7 +14,8 @@ def check_path(path: str) -> bool:
 
 
 def generate_code(length: int = 10) -> str:
-    return ''.join(random.choice(list(_base)) for _ in range(length))
+    "Generating code"
+    return ''.join(random.choice(_base) for _ in range(length))
 
 
 def logging_setup(*args: Tuple[str]) -> None:
@@ -50,5 +51,5 @@ def extract_data(value: str) -> List[str]:
     if os.path.exists(value):  # path to file with data
         with open(value, 'r', encoding='utf-8') as f:
             data = f.read().split('\n')
-            return [el for el in data if el != ' ']
+            return [el for el in data if el.replace(' ', '')]
     return [value]

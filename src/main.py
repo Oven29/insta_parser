@@ -177,7 +177,8 @@ def start() -> None:
         main_menu()
     except KeyboardInterrupt:
         logging.info('Выход из программы')
-        input('Нажмите любую кнопку для закрытия окна ')
+        input('Нажмите ENTER для закрытия окна ')
     except Exception as e:
         logging.error(e)
         logging.debug(e, exc_info=True)
+        input('Нажмите ENTER для закрытия окна ')
