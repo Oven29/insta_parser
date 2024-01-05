@@ -25,7 +25,8 @@ class Parser:
         value = value.replace(' ', '')
         if not 'https' in value:
             return value
-        elif value[-1] == '/':
+        value = value.split('?')[0]
+        if value[-1] == '/':
             return value.split('/')[-2]
         return value.split('/')[-1]
 
