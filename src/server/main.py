@@ -115,11 +115,11 @@ def pr_info(id: int) -> Any:
 @app.route('/kill_pr/<int:id>')
 def kill_pr(id: int) -> Any:
     proccess: db.Proccess = db.Proccess.get(db.Proccess.id == id)
+    proccess.status = True
+    proccess.save()
     try:
         os.kill(proccess.id, signal.SIGTERM)
         f.flash(f'Процесс, начатый {proccess.created_date}, успешно завершён {proccess.id=}')
-        proccess.status = True
-        proccess.save()
     except Exception:
         f.flash(f'Процесс, начатый {proccess.created_date}, не был завершён. '
             f'Скорее всего этот процесс уже не работает. {proccess.id=}')
