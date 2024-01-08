@@ -18,6 +18,9 @@
         <td>{{ account.login }}</td>
         <td>{{ account.password }}</td>
         <td>{{ account.added_date }}</td>
+        <td>
+          <a href="{{ url_for('.del_acc', id=account.id) }}" class="btn btn-outline-danger" role="button">Удалить аккаунт</a>
+        </td>
       </tr>
     {% endfor %}
   </tbody>

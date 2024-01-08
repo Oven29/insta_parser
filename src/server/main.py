@@ -161,7 +161,7 @@ def del_acc(id: int ) -> Any:
     acc = db.Account.get(db.Account.id == id)
     db.Account.delete().where(db.Account.id == id).execute()
     f.flash(f'Аккаунт {acc.login} удален')
-    return f.redirect(f.url_for('.index'))
+    return f.redirect(f.url_for('.acc_list'))
 
 
 def start() -> None:
