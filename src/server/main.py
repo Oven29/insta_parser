@@ -177,4 +177,4 @@ def start() -> None:
         try: os.kill(pr.id, signal.SIGTERM)
         except Exception: ...
     # launching
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
