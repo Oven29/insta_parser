@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<table class="table">
+  <thead>
+    <tr>
+      <th class="col">Номер</th>
+      <th class="col">Статус</th>
+      <th class="col">Дата запуска</th>
+      <th class="col">Аккаунт</th>
+      <th class="col">-</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for proccess in proccesses %}
+      <tr>
+        <td>{{ proccess.id }}</td>
+        {% if proccess.status %}
+          <td class="text-primary">Завершён</td>
+        {% else %}
+          <td class="text-success">Выполняется</td>
+        {% endif %}
+        <td>{{ proccess.created_date }}</td>
+        <td>{{ proccess.account.id }}. {{ proccess.account.login }}</td>
+        <td><a href="{{ url_for('.pr_info', id=proccess.id) }}" class="btn btn-outline-primary" role="button">Больше информации</a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

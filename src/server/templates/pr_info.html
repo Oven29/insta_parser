@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div id="_content">
+  <b>Данные:</b> <br>
+  <code>{{ proccess.data }}</code>
+  <br>
+  <b>Ключевые слова:</b> <br>
+  <code>{{ proccess.keywords }}</code>
+  <br>
+  <b>Режим работы:</b> <br>
+  <code>{{ proccess.mode }}</code>
+  <br>
+  <b>Аккаунт:</b> <br>
+  <code>{{ proccess.account.id }}. {{ proccess.account.login }}</code>
+  <br>
+  <b>Дата запуска:</b> <br>
+  <code>{{ proccess.created_date }}</code>
+  <br>
+  <b>Статус:</b> <br>
+  {% if proccess.status %}
+    <span class="text-success">Выполняется</span>
+    <a href="{{ url_for('.kill_pr', id=proccess.id) }}" class="btn btn btn-danger" role="button">Завершить процесс</a>
+  {% else %}
+    <span class="text-primary">Завершён</span>
+  {% endif %}
+  <br>
+  <a href="{{ url_for('.pr_list') }}" class="btn btn-primary" role="button">Назад</a>
+</div>
+
+{% endblock %}

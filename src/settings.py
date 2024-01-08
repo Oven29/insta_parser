@@ -8,12 +8,14 @@ def write_file(data: Dict[str, str]) -> None:
 
 
 _dir = pathlib.Path(__file__).parents[1]
-_settings_file = os.path.join(_dir, 'settings.json')
+_path_generator = lambda path : os.path.join(_dir, path)
+_settings_file = _path_generator('settings_json')
+
 default_values = {
-    'sessions_path': os.path.join(_dir, 'sessions'),
-    'ouput_path': os.path.join(_dir, 'output'),
-    'logs_path': os.path.join(_dir, 'logs'),
-    'log_level': 'info',
+    'sessions_path': _path_generator('sessions'),
+    'ouput_path': _path_generator('output'),
+    'logs_path': _path_generator('logs'),
+    'db_path': _path_generator('database.db'),
 }
 if os.path.exists(_settings_file):
     with open(_settings_file, 'r', encoding='utf-8') as f:
@@ -31,4 +33,4 @@ def update_settings(key: str, value: str) -> None:
 SESSIONS_PATH = settings['sessions_path']
 OUTPUT_PATH = settings['ouput_path']
 LOGS_PATH = settings['logs_path']
-LOG_LEVEL = logging._nameToLevel[settings['log_level'].upper()]
+DB_PATH = settings['db_path']

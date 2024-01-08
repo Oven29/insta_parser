@@ -17,6 +17,7 @@ logs/
 sessions/
 output/
 settings.json
+database.db
 
 # other
 drafts/

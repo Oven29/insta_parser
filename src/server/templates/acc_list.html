@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<table class="table">
+  <thead>
+    <tr>
+      <th class="col">Логин</th>
+      <th class="col">Пароль</th>
+      <th class="col">Дата добавления</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for account in accounts %}
+      <tr>
+        <td>{{ account.login }}</td>
+        <td>{{ account.password }}</td>
+        <td>{{ account.added_date }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

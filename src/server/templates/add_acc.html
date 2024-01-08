@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form action="{{ url_for('.add_acc') }}" method="post">
+  <div class="mb-3">
+    <label for="accounts-input" class="form-label">
+      Введите данные в формате: <br> <code>login1:password1 <br> login2:password2 <br> ...</code>
+    </label>
+    <textarea class="form-control" id="accounts-input" rows="5" name="accounts" placeholder="login:password ..."></textarea>
+  </div>
+  <button type="submit" class="btn btn-primary">Далее</button>
+</form>
+
+{% endblock %}
