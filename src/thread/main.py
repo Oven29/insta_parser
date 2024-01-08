@@ -8,13 +8,13 @@ def start(pr_id: int) -> None:
     "Run parser"
     proccess: db.Proccess = db.Proccess.get(db.Proccess.id == int(pr_id))
     utils.logging_setup(proccess.log_filename)
-    parser = client.Parser(
-        username=proccess.account.login,
-        password=proccess.account.password,
-        keywords=proccess.keywords,
-        writer=TxtWriter(proccess.output_filename),
-    )
     try:
+        parser = client.Parser(
+            username=proccess.account.login,
+            password=proccess.account.password,
+            keywords=proccess.keywords,
+            writer=TxtWriter(proccess.output_filename),
+        )
         for el in proccess.data:
             if 'likers' in proccess.mode:
                 logging.info(f'Start checking commentators post {el}')
