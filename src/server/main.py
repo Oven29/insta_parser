@@ -16,7 +16,7 @@ def index() -> Any:
 
 @app.route('/pr_list')
 def pr_list() -> Any:
-    proccesses = db.Proccess.select()
+    proccesses = reversed(db.Proccess.select())
     return f.render_template(
         'pr_list.html',
         title='Список процессов',
@@ -34,12 +34,12 @@ def add_pr() -> Any:
         return response()
 
     form = f.request.form
-    available_modes = ('likers', 'commntators', 'followers', 'followees',)
+    available_modes = ('likers', 'commentators', 'followers', 'followees',)
     mode = [m for m in available_modes if not form.get(m) is None]
     if not len(mode):
         f.flash('Процесс не был добавлен, поскольку не указан режим работы')
         return response()
-    if None in (form.get('data'), form.get('keywords')):
+    if not form.get('data') or not form.get('keywords'):
         f.flash('Процесс не был добавлен, не указаны ссылки и/или ключевые слова')
         return response()
     if form.get('account'):
@@ -118,6 +118,8 @@ def kill_pr(id: int) -> Any:
     try:
         os.kill(proccess.id, signal.SIGTERM)
         f.flash(f'Процесс, начатый {proccess.created_date}, успешно завершён {proccess.id=}')
+        proccess.status = True
+        proccess.save()
     except Exception:
         f.flash(f'Процесс, начатый {proccess.created_date}, не был завершён. '
             f'Скорее всего этот процесс уже не работает. {proccess.id=}')
@@ -139,7 +141,6 @@ def add_acc() -> Any:
     if f.request.method == 'POST':
         now = datetime.now()
         data = utils.extract_data(f.request.form.get('accounts'))
-        print(data)
         for log_pas in data:
             login, password = log_pas.split(':', 1)
             db.Account.create(

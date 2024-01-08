@@ -39,10 +39,10 @@ class Account(BaseModel):
 class Proccess(BaseModel):
     data = ArrayField(null=False)
     keywords = ArrayField(null=False)
-    mode = CharField(max_length=32, null=False)
+    mode = ArrayField(null=False)
     account = ForeignKeyField(Account)
     created_date = DateTimeField(null=False)
-    status = BooleanField(null=False, default=False)
+    status = BooleanField(null=False, default=False)  # ended
     pid = IntegerField(null=True)
     
     @hybrid_property

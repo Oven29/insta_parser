@@ -1,5 +1,5 @@
-import os, logging
-from .. import settings, utils, db
+import logging
+from .. import utils, db
 from . import client
 from .writer import TxtWriter
 
@@ -14,18 +14,22 @@ def start(pr_id: int) -> None:
         keywords=proccess.keywords,
         writer=TxtWriter(proccess.output_filename),
     )
-    for el in proccess.data:
-        if 'likes' in proccess.mode:
-            logging.info(f'Start checking commentators post {el}')
-            parser.parse_likers(parser.get_post(el))
-        if 'comments' in proccess.mode:
-            logging.info(f'Start checking likers post {el}')
-            parser.parse_commentators(parser.get_post(el))
-        if 'folowees' in proccess.mode:
-            logging.info(f'Start checking followees profile {el}')
-            parser.parse_followees(parser.get_profile(el))
-        if 'folowers' in proccess.mode:
-            logging.info(f'Start checking followers profile {el}')
-            parser.parse_followers(parser.get_profile(el))
-    proccess.status = True
-    proccess.save()
+    try:
+        for el in proccess.data:
+            if 'likers' in proccess.mode:
+                logging.info(f'Start checking commentators post {el}')
+                parser.parse_likers(parser.get_post(el))
+            if 'commentators' in proccess.mode:
+                logging.info(f'Start checking likers post {el}')
+                parser.parse_commentators(parser.get_post(el))
+            if 'followees' in proccess.mode:
+                logging.info(f'Start checking followees profile {el}')
+                parser.parse_followees(parser.get_profile(el))
+            if 'followers' in proccess.mode:
+                logging.info(f'Start checking followers profile {el}')
+                parser.parse_followers(parser.get_profile(el))
+    except Exception as e:
+        logging.error(e, exc_info=True)
+    finally:
+        proccess.status = True
+        proccess.save()

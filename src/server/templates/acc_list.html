@@ -5,6 +5,7 @@
 <table class="table">
   <thead>
     <tr>
+      <th class="col">Номер</th>
       <th class="col">Логин</th>
       <th class="col">Пароль</th>
       <th class="col">Дата добавления</th>
@@ -13,6 +14,7 @@
   <tbody>
     {% for account in accounts %}
       <tr>
+        <td>{{ account.id }}</td>
         <td>{{ account.login }}</td>
         <td>{{ account.password }}</td>
         <td>{{ account.added_date }}</td>

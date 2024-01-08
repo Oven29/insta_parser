@@ -9,7 +9,7 @@ def write_file(data: Dict[str, str]) -> None:
 
 _dir = pathlib.Path(__file__).parents[1]
 _path_generator = lambda path : os.path.join(_dir, path)
-_settings_file = _path_generator('settings_json')
+_settings_file = _path_generator('settings.json')
 
 default_values = {
     'sessions_path': _path_generator('sessions'),
