@@ -51,6 +51,9 @@ def add_pr() -> Any:
         if acc is None:
             f.flash('Аккаунт, который был указан процессу не найден!')
             return response()
+        if acc.is_del:
+            f.flash('Аккаунт, который был указан удалён')
+            return response()
         proccess = db.Proccess.create(
             data=utils.extract_data(form['data']),
             keywords=utils.extract_data(form['keywords']),
@@ -72,7 +75,7 @@ def add_pr() -> Any:
     active_proccesses = db.Proccess.select().where(
         (db.Proccess.status == False) & db.Proccess.account.is_null()
     )
-    accounts = db.Account.select()
+    accounts = db.Account.select().where(db.Account.is_del == False)
     busy = set()
     for apr in active_proccesses:
         busy.add(apr.account.id)
@@ -128,7 +131,7 @@ def kill_pr(id: int) -> Any:
 
 @app.route('/acc_list')
 def acc_list() -> Any:
-    accounts = db.Account.select()
+    accounts = db.Account.select().where(db.Account.is_del == False)
     return f.render_template(
         'acc_list.html',
         title='Список аккаунтов',
@@ -159,8 +162,9 @@ def add_acc() -> Any:
 @app.route('/del_acc/<int:id>')
 def del_acc(id: int ) -> Any:
     acc = db.Account.get(db.Account.id == id)
-    db.Account.delete().where(db.Account.id == id).execute()
-    f.flash(f'Аккаунт {acc.login} удален')
+    acc.is_del = True
+    acc.save()
+    f.flash(f'Аккаунт {acc.id}. {acc.login} удален')
     return f.redirect(f.url_for('.acc_list'))
 
 

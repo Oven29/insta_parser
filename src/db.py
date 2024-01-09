@@ -34,6 +34,7 @@ class Account(BaseModel):
     login = CharField(max_length=128)
     password = CharField(max_length=128)
     added_date = DateTimeField(null=False)
+    is_del = BooleanField(null=False, default=False)
 
 
 class Proccess(BaseModel):
@@ -52,6 +53,12 @@ class Proccess(BaseModel):
     @hybrid_property
     def log_filename(self) -> str:
         return os.path.join(settings.LOGS_PATH, f'{self.id}.log')
+
+    @hybrid_property
+    def account_info(self) -> str:
+        if self.account.is_del:
+            return f'Аккаунт удалён ({self.account.login})'
+        return f'{self.account.id}. {self.account.login}'
 
 
 def setup() -> None:

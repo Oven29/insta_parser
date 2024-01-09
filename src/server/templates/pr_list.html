@@ -22,7 +22,7 @@
           <td class="text-success">Выполняется</td>
         {% endif %}
         <td>{{ proccess.created_date }}</td>
-        <td>{{ proccess.account.id }}. {{ proccess.account.login }}</td>
+        <td>{{ proccess.account_info }}</td>
         <td><a href="{{ url_for('.pr_info', id=proccess.id) }}" class="btn btn-outline-primary" role="button">Больше информации</a></td>
       </tr>
     {% endfor %}
