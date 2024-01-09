@@ -2,7 +2,7 @@ from typing import Tuple
 import os
 from abc import ABC, abstractmethod
 from .. import settings
-from .. import utils
+from ..server import utils
 
 
 class WriterBase(ABC):

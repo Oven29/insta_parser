@@ -1,5 +1,5 @@
 import logging
-from .. import utils, db
+from .. import db
 from . import client
 from .writer import TxtWriter
 
@@ -7,7 +7,14 @@ from .writer import TxtWriter
 def start(pr_id: int) -> None:
     "Run parser"
     proccess: db.Proccess = db.Proccess.get(db.Proccess.id == int(pr_id))
-    utils.logging_setup(proccess.log_filename)
+    logging.basicConfig(
+        filename=proccess.log_filename,
+        filemode='w',
+        encoding='utf-8',
+        format='[%(asctime)s | %(levelname)s]: %(message)s',
+        datefmt='%m.%d.%Y %H:%M:%S',
+        level=logging.INFO,
+    )
     try:
         parser = client.Parser(
             username=proccess.account.login,
@@ -30,6 +37,7 @@ def start(pr_id: int) -> None:
                 parser.parse_followers(parser.get_profile(el))
     except Exception as e:
         logging.error(e, exc_info=True)
+        logging.debug(e, exc_info=False)
     finally:
         proccess.status = True
         proccess.save()

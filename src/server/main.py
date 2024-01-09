@@ -2,7 +2,9 @@ import os, signal, subprocess, sys
 from datetime import datetime
 from typing import Any
 import flask as f
-from .. import db, utils, settings
+
+from . import utils
+from .. import db, settings
 
 
 app = f.Flask(__name__)
@@ -107,7 +109,9 @@ def add_pr() -> Any:
 
 @app.route('/pr_info/<int:id>')
 def pr_info(id: int) -> Any:
-    proccess = db.Proccess.get(db.Proccess.id == id)
+    proccess: db.Proccess = db.Proccess.get_or_none(db.Proccess.id == id)
+    if proccess is None:
+        f.abort(404)
     return f.render_template(
         'pr_info.html',
         title='Информация о процессе',
@@ -168,12 +172,38 @@ def del_acc(id: int ) -> Any:
     return f.redirect(f.url_for('.acc_list'))
 
 
+@app.route('/view_file/<type>/<int:id>')
+def view_file(type: str, id: int) -> Any:
+    proccess: db.Proccess = db.Proccess.get_or_none(db.Proccess.id == id)
+    if proccess is None:
+        f.abort(404)
+    if type == 'log':
+        title = 'Логи'
+        filename = proccess.log_filename
+    elif type == 'output':
+        title = 'Результат работы'
+        filename = proccess.output_filename
+    if not os.path.exists(filename):
+        f.flash(f'Файл не найден')
+        return f.redirect(f.url_for('.pr_info', id=id))
+    with open(filename, 'r', encoding='utf-8') as file:
+        content = file.read().split('\n')
+    return f.render_template(
+        'view_file.html',
+        title=f'{title} процесса {proccess.id}',
+        content=content,
+        filename=filename,
+        pr_id=id,
+    )
+
+
 def start() -> None:
     "Start server"
     # setuping
     db.setup()
     utils.check_path(settings.SESSIONS_PATH)
     utils.check_path(settings.OUTPUT_PATH)
+    utils.check_path(settings.LOGS_PATH)
     proccesses = db.Proccess.select().where(db.Proccess.status == False)
     for pr in proccesses:
         pr.status = True
@@ -181,4 +211,4 @@ def start() -> None:
         try: os.kill(pr.id, signal.SIGTERM)
         except Exception: ...
     # launching
-    app.run(debug=True, port=5000)
+    app.run(debug=False, port=5000)

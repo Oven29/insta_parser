@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div id="_content" style="text-align: left;">
+  <div id="_filename">Путь до файла: <code>{{ filename }}</code></div><br>
+  <div class="bg-secondary bg-opacity-50 text-dark">
+    {% for line in content %}
+      <p>{{ line }}</p>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

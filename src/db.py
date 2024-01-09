@@ -52,7 +52,7 @@ class Proccess(BaseModel):
 
     @hybrid_property
     def log_filename(self) -> str:
-        return os.path.join(settings.LOGS_PATH, f'{self.id}.log')
+        return os.path.join(settings.LOGS_PATH, f'log-{self.id}.txt')
 
     @hybrid_property
     def account_info(self) -> str:

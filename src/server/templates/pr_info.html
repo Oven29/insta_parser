@@ -23,9 +23,11 @@
   <br>
   <b>Логи:</b> <br>
   <code>{{ proccess.log_filename }}</code>
+  <a href="{{ url_for('.view_file', id=proccess.id, type='log') }}" class="btn btn btn-outline-secondary" role="button">Посмотреть логи</a>
   <br>
   <b>Результат работы:</b> <br>
   <code>{{ proccess.output_filename }}</code>
+  <a href="{{ url_for('.view_file', id=proccess.id, type='output') }}" class="btn btn btn-outline-secondary" role="button">Посмотреть результат работы</a>
   <br>
   <b>Статус:</b> <br>
   {% if proccess.status %}
