@@ -201,7 +201,6 @@ def start() -> None:
     "Start server"
     # setuping
     db.setup()
-    utils.check_path(settings.SESSIONS_PATH)
     utils.check_path(settings.OUTPUT_PATH)
     utils.check_path(settings.LOGS_PATH)
     proccesses = db.Proccess.select().where(db.Proccess.status == False)

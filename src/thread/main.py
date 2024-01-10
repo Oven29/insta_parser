@@ -24,10 +24,10 @@ def start(pr_id: int) -> None:
         )
         for el in proccess.data:
             if 'likers' in proccess.mode:
-                logging.info(f'Start checking commentators post {el}')
+                logging.info(f'Start checking likers post {el}')
                 parser.parse_likers(parser.get_post(el))
             if 'commentators' in proccess.mode:
-                logging.info(f'Start checking likers post {el}')
+                logging.info(f'Start checking commentators post {el}')
                 parser.parse_commentators(parser.get_post(el))
             if 'followees' in proccess.mode:
                 logging.info(f'Start checking followees profile {el}')
@@ -36,8 +36,13 @@ def start(pr_id: int) -> None:
                 logging.info(f'Start checking followers profile {el}')
                 parser.parse_followers(parser.get_profile(el))
     except Exception as e:
-        logging.error(e, exc_info=True)
-        logging.debug(e, exc_info=False)
+        if 'Redirected to login page.' in str(e):
+            logging.info('Proccess has been stopped due to instagram limit')
+        else:
+            logging.error(e, exc_info=True)
+            logging.info('Proccess has finished with error')
+    else:
+        logging.info('Proccess has successfully completed')
     finally:
         proccess.status = True
         proccess.save()

@@ -12,7 +12,6 @@ _path_generator = lambda path : os.path.join(_dir, path)
 _settings_file = _path_generator('settings.json')
 
 default_values = {
-    'sessions_path': _path_generator('sessions'),
     'ouput_path': _path_generator('output'),
     'logs_path': _path_generator('logs'),
     'db_path': _path_generator('database.db'),
@@ -30,7 +29,6 @@ def update_settings(key: str, value: str) -> None:
     write_file(settings)
 
 
-SESSIONS_PATH = settings['sessions_path']
 OUTPUT_PATH = settings['ouput_path']
 LOGS_PATH = settings['logs_path']
 DB_PATH = settings['db_path']

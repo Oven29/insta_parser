@@ -11,11 +11,16 @@ class Parser:
     def __init__(self, username: str, password: str, keywords: List[str], writer: WriterBase) -> None:
         "Loading session from file and cerating instance loader"
         self.loader = Instaloader()
-        logging.info(f'Trying login account {username=}')
-        self.loader.login(username, password)
+        self.username = username
+        self.password = password
+        self.login()
         self.keywords = keywords
         self.writer = writer
         self._history = []  # list of account that have already been checked
+
+    def login(self) -> None:
+        logging.info(f'Trying login account @{self.username}')
+        self.loader.login(self.username, self.password)
 
     @staticmethod
     def _cut_url(value: str) -> str:
@@ -42,8 +47,9 @@ class Parser:
 
     def _parse(self, users: Iterable[Profile]) -> None:
         "Checking users and append verified ones"
-        try:
-            for el in users:
+        exc_count = 0
+        for el in users:
+            try:
                 if el.username in self._history:
                     continue
                 self._history.append(el.username)
@@ -55,8 +61,11 @@ class Parser:
                             f'"{kw}" {bio=}')
                         self.writer.write(el.username)
                         break
-        except Exception as e:
-            logging.error(e, exc_info=True)
+            except Exception as e:
+                exc_count += 1
+                if exc_count > 10:
+                    return
+                logging.error(e, exc_info=False)
 
     def parse_commentators(self, post: Post | str) -> None:
         "Parsing post's commentators"
