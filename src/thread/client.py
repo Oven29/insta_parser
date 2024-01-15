@@ -47,25 +47,21 @@ class Parser:
 
     def _parse(self, users: Iterable[Profile]) -> None:
         "Checking users and append verified ones"
-        exc_count = 0
         for el in users:
-            try:
-                if el.username in self._history:
-                    continue
-                self._history.append(el.username)
-                bio = el.biography.lower()
-                logging.info(f'Checking user @{el.username} {el.userid=} {bio=}')
-                for kw in self.keywords:
-                    if kw in bio:
-                        logging.info(f'A match was found @{el.username} {el.userid=} '
-                            f'"{kw}" {bio=}')
-                        self.writer.write(el.username)
-                        break
-            except Exception as e:
-                exc_count += 1
-                if exc_count > 10:
-                    return
-                logging.error(e, exc_info=False)
+            # try:
+            if el.username in self._history:
+                continue
+            self._history.append(el.username)
+            bio = el.biography.lower()
+            logging.info(f'Checking user @{el.username} {el.userid=} {bio=}')
+            for kw in self.keywords:
+                if kw in bio:
+                    logging.info(f'A match was found @{el.username} {el.userid=} '
+                        f'"{kw}" {bio=}')
+                    self.writer.write(el.username)
+                    break
+            # except Exception as e:
+            #     logging.error(e, exc_info=False)
 
     def parse_commentators(self, post: Post | str) -> None:
         "Parsing post's commentators"
