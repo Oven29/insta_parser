@@ -45,7 +45,8 @@ class Proccess(BaseModel):
     created_date = DateTimeField(null=False)
     status = BooleanField(null=False, default=False)  # ended
     pid = IntegerField(null=True)
-    
+    type = CharField(max_length=32, null=False)
+
     @hybrid_property
     def output_filename(self) -> str:
         return os.path.join(settings.OUTPUT_PATH, f'output-{self.id}.txt')

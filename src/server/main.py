@@ -62,6 +62,7 @@ def add_pr() -> Any:
             mode=mode,
             account=acc,
             created_date=datetime.now(),
+            type=form['parser_type'],
         )
         proccess.pid = subprocess.Popen([
             sys.executable,
@@ -95,6 +96,7 @@ def add_pr() -> Any:
             mode=mode,
             account=accounts[count],
             created_date=now,
+            type=form['parser_type'],
         )
         proccess.pid = subprocess.Popen([
             sys.executable,

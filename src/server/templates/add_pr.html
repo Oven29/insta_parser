@@ -49,6 +49,18 @@
     <input type="text" class="form-control" id="account-input" placeholder="login" name="account">
   </div>
   <br>
+  <div class="mb-3">
+    <p>Выберите тип запуска</p>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" value="instaloader" name="parser_type" id="parser-type-instaloader">
+      <label class="form-check-label" for="parser-type-instaloader">тип 1 (InstaLoader)</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" value="instagrapi" name="parser_type" id="parser-type-instagrapi" checked>
+      <label class="form-check-label" for="parser-type-instagrapi">тип 2 (InstaGrapi)</label>
+    </div>
+  </div>
+  <br>
   <button type="submit" class="btn btn-primary">Добавить</button>
 </form>
 

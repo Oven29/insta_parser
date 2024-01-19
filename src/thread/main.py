@@ -16,7 +16,11 @@ def start(pr_id: int) -> None:
         level=logging.INFO,
     )
     try:
-        parser = client.Parser(
+        if proccess.type == 'instagrapi':
+            model = client.InstaGrapiParser
+        elif proccess.type == 'instaloader':            
+            model = client.InstaLoaderParser
+        parser = model(
             username=proccess.account.login,
             password=proccess.account.password,
             keywords=proccess.keywords,

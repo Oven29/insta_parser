@@ -13,6 +13,9 @@
 - Общие зависимости
     - Для запуска программы на компьютере должен быть установлен python не ниже 3.10 версии (https://www.python.org/downloads/)
 - Python зависимости
-    - Для установки python зависимостей, откройте терминал (или powershell, если ос windows) и введите команду `pip install instaloader==4.10.2 peewee==3.17.0 Flask==3.0.0` или `pip3 install instaloader==4.10.2 peewee==3.17.0 Flask==3.0.0`
+    - Для установки python зависимостей, откройте терминал (или powershell, если ос windows) и введите команду 
+     `pip install instaloader==4.10.2 peewee==3.17.0 Flask==3.0.0 instagrapi==2.0.1 pillow==10.2.0`
+     или 
+     `pip3 install instaloader==4.10.2 peewee==3.17.0 Flask==3.0.0 instagrapi==2.0.1 pillow==10.2.0`
 - Запуск
     - Когда все зависимости установлены, остаётся только запустить программу. Для этого просто откройте файл `run.py`
