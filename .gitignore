@@ -16,6 +16,7 @@ logs/
 # saved data
 sessions/
 output/
+settings.json
 database.db
 
 # other
